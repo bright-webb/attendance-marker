@@ -1,0 +1,12 @@
+endpoint=https://exaoaxasdwatubavchot.supabase.co/rest/v1/rpc/mark_student_attendance
+
+payloads={_student_id: "014564a3-8d3e-462f-80e4-ff755ad0b968", _date: "2026-10-23", _status: "present"}
+_date
+: 
+"2026-10-23"
+_status
+: 
+"present"
+_student_id
+: 
+"014564a3-8d3e-462f-80e4-ff755ad0b968"

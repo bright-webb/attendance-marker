@@ -1,0 +1,302 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>CTECH Attendance Automation Platform</title>
+  <link rel="stylesheet" href="style.css">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&family=JetBrains+Mono:wght@400;500;600&display=swap" rel="stylesheet">
+</head>
+<body>
+  <div class="app-container">
+    <!-- TOP NAVIGATION -->
+    <header class="navbar">
+      <div class="brand">
+        <div class="brand-icon">
+          <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round">
+            <path d="M16 21v-2a4 4 0 0 0-4-4H6a4 4 0 0 0-4 4v2"></path>
+            <circle cx="9" cy="7" r="4"></circle>
+            <polyline points="16 11 18 13 22 9"></polyline>
+          </svg>
+        </div>
+        <div class="brand-text">
+          <h1>CTECH Attendance</h1>
+          <span class="brand-sub">Bulk Automation Engine</span>
+        </div>
+      </div>
+
+      <div class="nav-actions">
+        <div class="campus-badge" id="activeCampusBadge">
+          <span class="badge-dot"></span>
+          <span class="campus-label">Campus:</span>
+          <strong id="activeCampusName">CTEC PORTHARCOURT</strong>
+        </div>
+
+        <div class="auth-status-pill" id="authStatusPill" onclick="openSettingsModal()">
+          <span class="status-indicator warning" id="authIndicator"></span>
+          <span id="authStatusText">Checking Auth...</span>
+        </div>
+
+        <button class="btn btn-secondary btn-sm" onclick="openSettingsModal()">
+          <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+            <circle cx="12" cy="12" r="3"></circle>
+            <path d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 0 1 0 2.83 2 2 0 0 1-2.83 0l-.06-.06a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1 1.51V21a2 2 0 0 1-2 2 2 2 0 0 1-2-2v-.09A1.65 1.65 0 0 0 9 19.4a1.65 1.65 0 0 0-1.82.33l-.06.06a2 2 0 0 1-2.83 0 2 2 0 0 1 0-2.83l.06-.06a1.65 1.65 0 0 0 .33-1.82 1.65 1.65 0 0 0-1.51-1H3a2 2 0 0 1-2-2 2 2 0 0 1 2-2h.09A1.65 1.65 0 0 0 4.6 9a1.65 1.65 0 0 0-.33-1.82l-.06-.06a2 2 0 0 1 0-2.83 2 2 0 0 1 2.83 0l.06.06a1.65 1.65 0 0 0 1.82.33H9a1.65 1.65 0 0 0 1-1.51V3a2 2 0 0 1 2-2 2 2 0 0 1 2 2v.09a1.65 1.65 0 0 0 1 1.51 1.65 1.65 0 0 0 1.82-.33l.06-.06a2 2 0 0 1 2.83 0 2 2 0 0 1 0 2.83l-.06.06a1.65 1.65 0 0 0-.33 1.82V9a1.65 1.65 0 0 0 1.51 1H21a2 2 0 0 1 2 2 2 2 0 0 1-2 2h-.09a1.65 1.65 0 0 0-1.51 1z"></path>
+          </svg>
+          Tokens & Settings
+        </button>
+      </div>
+    </header>
+
+    <!-- MAIN BODY -->
+    <main class="main-content">
+      <!-- CONFIGURATION STRIP -->
+      <section class="control-panel card">
+        <div class="control-grid">
+          <div class="control-group">
+            <label for="campusSelect">Target Campus</label>
+            <select id="campusSelect" class="form-input">
+              <option value="4a015b33-e179-4927-816a-a9ec80f13bfd" selected>CTEC PORTHARCOURT - RIVERS (Default)</option>
+            </select>
+          </div>
+
+          <div class="control-group">
+            <label for="attendanceDate">Attendance Date</label>
+            <input type="date" id="attendanceDate" class="form-input">
+          </div>
+
+          <div class="control-group">
+            <label for="attendanceStatus">Attendance Status</label>
+            <select id="attendanceStatus" class="form-input">
+              <option value="present" selected>Present (Normal)</option>
+              <option value="absent">Absent</option>
+              <option value="late">Late</option>
+              <option value="excused">Excused</option>
+            </select>
+          </div>
+
+          <div class="control-group align-end">
+            <div class="template-buttons">
+              <span class="sub-label">Download Sample Files:</span>
+              <div class="btn-group">
+                <a href="/api/sample-csv" class="btn btn-outline btn-xs" download>
+                  <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"></path><polyline points="7 10 12 15 17 10"></polyline><line x1="12" y1="15" x2="12" y2="3"></line></svg>
+                  Sample CSV
+                </a>
+                <a href="/api/sample-excel" class="btn btn-outline btn-xs" download>
+                  <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"></path><polyline points="7 10 12 15 17 10"></polyline><line x1="12" y1="15" x2="12" y2="3"></line></svg>
+                  Sample Excel
+                </a>
+              </div>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <!-- UPLOAD SECTION -->
+      <section class="upload-section">
+        <div class="dropzone" id="dropZone">
+          <input type="file" id="fileInput" accept=".csv, .xlsx, .xls" hidden>
+          <div class="dropzone-content">
+            <div class="upload-icon-circle">
+              <svg width="36" height="36" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                <path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"></path>
+                <polyline points="17 8 12 3 7 8"></polyline>
+                <line x1="12" y1="3" x2="12" y2="15"></line>
+              </svg>
+            </div>
+            <h3>Drop your attendance file here, or <span class="highlight-link">browse</span></h3>
+            <p class="dropzone-desc">Supports <strong>Excel (.xlsx, .xls)</strong> and <strong>CSV (.csv)</strong> files. Columns can be <code>first_name</code> & <code>last_name</code> or combined <code>name</code>.</p>
+            <div class="supported-tags">
+              <span class="tag">Auto-Detects Columns</span>
+              <span class="tag">Handles Surname-First</span>
+              <span class="tag">Fuzzy Match Tolerance</span>
+              <span class="tag">Duplicate Protection</span>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <!-- RESULTS / RECONCILIATION SECTION (Initially hidden until file uploaded) -->
+      <section class="results-section" id="resultsSection" style="display: none;">
+        <!-- STATS BAR -->
+        <div class="stats-row">
+          <div class="stat-card">
+            <div class="stat-num" id="statTotal">0</div>
+            <div class="stat-title">Total Rows Parsed</div>
+          </div>
+          <div class="stat-card success">
+            <div class="stat-num" id="statMatched">0</div>
+            <div class="stat-title">Exact Matches (100%)</div>
+          </div>
+          <div class="stat-card warning">
+            <div class="stat-num" id="statFuzzy">0</div>
+            <div class="stat-title">Fuzzy / Reversed</div>
+          </div>
+          <div class="stat-card info">
+            <div class="stat-num" id="statOtherCampus">0</div>
+            <div class="stat-title">Other Campus</div>
+          </div>
+          <div class="stat-card danger">
+            <div class="stat-num" id="statUnmatched">0</div>
+            <div class="stat-title">Unmatched</div>
+          </div>
+        </div>
+
+        <!-- ACTIONS & FILTER BAR -->
+        <div class="table-toolbar card">
+          <div class="toolbar-left">
+            <div class="search-box">
+              <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="11" cy="11" r="8"></circle><line x1="21" y1="21" x2="16.65" y2="16.65"></line></svg>
+              <input type="text" id="filterInput" placeholder="Filter student names or status...">
+            </div>
+            <div class="filter-pills">
+              <button class="pill active" data-filter="all">All (<span id="countPillAll">0</span>)</button>
+              <button class="pill" data-filter="selected">Selected (<span id="countPillSelected">0</span>)</button>
+              <button class="pill" data-filter="unmatched">Unmatched (<span id="countPillUnmatched">0</span>)</button>
+            </div>
+          </div>
+
+          <div class="toolbar-right">
+            <button class="btn btn-outline btn-sm" id="btnToggleAll">Select All Ready</button>
+            <div class="btn-group" id="downloadUnmatchedGroup" style="display:none;">
+              <button class="btn btn-outline btn-sm" onclick="downloadUnmatched('csv')" title="Download unmatched names as CSV">
+                <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"></path><polyline points="7 10 12 15 17 10"></polyline><line x1="12" y1="15" x2="12" y2="3"></line></svg>
+                Unmatched CSV
+              </button>
+              <button class="btn btn-outline btn-sm" onclick="downloadUnmatched('xlsx')" title="Download unmatched names as Excel">
+                <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"></path><polyline points="7 10 12 15 17 10"></polyline><line x1="12" y1="15" x2="12" y2="3"></line></svg>
+                Unmatched XLSX
+              </button>
+            </div>
+            <button class="btn btn-primary" id="btnMarkAttendance">
+              <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><polyline points="20 6 9 17 4 12"></polyline></svg>
+              Mark Attendance for <span id="readyCountBadge">0</span> Students
+            </button>
+          </div>
+        </div>
+
+        <!-- RECONCILIATION TABLE -->
+        <div class="table-container card">
+          <table class="data-table" id="reconciliationTable">
+            <thead>
+              <tr>
+                <th width="40"><input type="checkbox" id="masterCheckbox"></th>
+                <th width="50">#</th>
+                <th>Uploaded Name</th>
+                <th>Matched Student Roster</th>
+                <th>Campus</th>
+                <th>Match Type & Confidence</th>
+                <th width="100">Status</th>
+              </tr>
+            </thead>
+            <tbody id="tableBody">
+              <!-- Dynamically rendered -->
+            </tbody>
+          </table>
+        </div>
+      </section>
+    </main>
+
+    <!-- EXECUTION MODAL / PROGRESS -->
+    <div class="modal-overlay" id="executionModal">
+      <div class="modal-card modal-lg">
+        <div class="modal-header">
+          <h3>Submitting Attendance to Supabase</h3>
+          <span class="modal-close" onclick="closeExecutionModal()">&times;</span>
+        </div>
+        <div class="modal-body">
+          <div class="progress-container">
+            <div class="progress-bar">
+              <div class="progress-fill" id="execProgressFill" style="width: 0%;"></div>
+            </div>
+            <div class="progress-stats">
+              <span id="execProgressPercent">0%</span>
+              <span id="execProgressFraction">0 / 0 Completed</span>
+            </div>
+          </div>
+
+          <div class="exec-summary-chips">
+            <span class="chip chip-success">Successful: <strong id="execSuccessCount">0</strong></span>
+            <span class="chip chip-danger">Failed: <strong id="execFailureCount">0</strong></span>
+          </div>
+
+          <div class="exec-console">
+            <div class="console-header">
+              <span>Live Execution Log</span>
+              <button class="btn-clear" onclick="clearConsole()">Clear</button>
+            </div>
+            <div class="console-body" id="consoleLogs"></div>
+          </div>
+        </div>
+        <div class="modal-footer">
+          <button class="btn btn-secondary" id="btnDoneExec" onclick="closeExecutionModal()" disabled>Done</button>
+        </div>
+      </div>
+    </div>
+
+    <!-- SETTINGS & TOKENS MODAL -->
+    <div class="modal-overlay" id="settingsModal">
+      <div class="modal-card">
+        <div class="modal-header">
+          <h3>Supabase Auth & API Configuration</h3>
+          <span class="modal-close" onclick="closeSettingsModal()">&times;</span>
+        </div>
+        <div class="modal-body">
+          <p class="modal-hint">
+            Paste your <strong>Access Token</strong> (JWT) and <strong>Refresh Token</strong> from your browser session (LocalStorage / Cookies).
+          </p>
+
+          <div class="form-group">
+            <label for="cfgAccessToken">Access Token (Bearer JWT)</label>
+            <textarea id="cfgAccessToken" rows="4" class="form-input code-font" placeholder="eyJhbGciOi..."></textarea>
+            <span class="input-helper" id="tokenLengthHelper">Token Length: 0 characters</span>
+          </div>
+
+          <div class="form-group">
+            <label for="cfgRefreshToken">Refresh Token</label>
+            <input type="text" id="cfgRefreshToken" class="form-input code-font" placeholder="e.g. vqdlunyh2b6q...">
+          </div>
+
+          <div class="form-group">
+            <label for="cfgSupabaseUrl">Supabase URL</label>
+            <input type="text" id="cfgSupabaseUrl" class="form-input code-font" value="https://exaoaxasdwatubavchot.supabase.co">
+          </div>
+
+          <div class="form-group">
+            <label for="cfgAnonKey">Supabase Anon Key (Optional)</label>
+            <input type="text" id="cfgAnonKey" class="form-input code-font" placeholder="Optional anon public key">
+          </div>
+
+          <div class="test-feedback" id="testFeedback" style="display: none;"></div>
+
+          <div class="modal-actions-row">
+            <button class="btn btn-outline btn-sm" onclick="testConnection()">
+              <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M22 11.08V12a10 10 0 1 1-5.93-9.14"></path><polyline points="22 4 12 14.01 9 11.01"></polyline></svg>
+              Test Connection
+            </button>
+            <button class="btn btn-outline btn-sm" onclick="refreshToken()">
+              <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="23 4 23 10 17 10"></polyline><path d="M20.49 15a9 9 0 1 1-2.12-9.36L23 10"></path></svg>
+              Refresh Token
+            </button>
+            <button class="btn btn-outline btn-sm" onclick="syncStudents()">
+              <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"></path><circle cx="9" cy="7" r="4"></circle><path d="M23 21v-2a4 4 0 0 0-3-3.87"></path><path d="M16 3.13a4 4 0 0 1 0 7.75"></path></svg>
+              Sync Students from API
+            </button>
+          </div>
+        </div>
+        <div class="modal-footer">
+          <button class="btn btn-secondary" onclick="closeSettingsModal()">Cancel</button>
+          <button class="btn btn-primary" onclick="saveSettings()">Save & Apply</button>
+        </div>
+      </div>
+    </div>
+
+    <!-- TOAST NOTIFICATIONS -->
+    <div class="toast-container" id="toastContainer"></div>
+  </div>
+
+  <script src="app.js"></script>
+</body>
+</html>
