@@ -13,9 +13,25 @@ const supabaseService = require('./supabaseService');
 const app = express();
 const PORT = process.env.PORT || 3000;
 
+// ROOT_DIR: works in local dev (__dirname = project root) AND on Vercel where
+// @vercel/node bundles via ncc — in that case __dirname becomes something like
+// /var/task while the included files land at process.cwd(). We try __dirname
+// first and fall back to process.cwd() so file lookups always resolve correctly.
+function resolveRoot(...segments) {
+  const fromDirname = path.join(__dirname, ...segments);
+  if (fs.existsSync(fromDirname)) return fromDirname;
+  const fromCwd = path.join(process.cwd(), ...segments);
+  if (fs.existsSync(fromCwd)) return fromCwd;
+  // Return the __dirname version as the canonical path even if missing,
+  // so error messages make sense.
+  return fromDirname;
+}
+
 app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
-app.use(express.static(path.join(__dirname, 'public')));
+// Serve static files — check both __dirname/public and cwd/public
+const publicDir = resolveRoot('public');
+app.use(express.static(publicDir));
 
 // Configure multer for file uploads in memory
 const upload = multer({
@@ -30,8 +46,9 @@ const DEFAULT_CAMPUS_ID = '4a015b33-e179-4927-816a-a9ec80f13bfd'; // CTEC PORTHA
 
 function loadLocalData() {
   try {
-    if (fs.existsSync(path.join(__dirname, 'campus_select.txt'))) {
-      const rawCampuses = fs.readFileSync(path.join(__dirname, 'campus_select.txt'), 'utf8');
+    const campusPath = resolveRoot('campus_select.txt');
+    if (fs.existsSync(campusPath)) {
+      const rawCampuses = fs.readFileSync(campusPath, 'utf8');
       const lastBracket = rawCampuses.lastIndexOf(']');
       if (lastBracket !== -1) {
         campuses = JSON.parse(rawCampuses.substring(0, lastBracket + 1));
@@ -42,8 +59,9 @@ function loadLocalData() {
   }
 
   try {
-    if (fs.existsSync(path.join(__dirname, 'students.txt'))) {
-      const rawStudents = fs.readFileSync(path.join(__dirname, 'students.txt'), 'utf8');
+    const studentsPath = resolveRoot('students.txt');
+    if (fs.existsSync(studentsPath)) {
+      const rawStudents = fs.readFileSync(studentsPath, 'utf8');
       const lastBracket = rawStudents.lastIndexOf(']');
       if (lastBracket !== -1) {
         students = JSON.parse(rawStudents.substring(0, lastBracket + 1));
@@ -197,7 +215,7 @@ app.post('/api/sync-students', async (req, res) => {
       // Persist the full roster to students.txt so it survives server restarts
       try {
         fs.writeFileSync(
-          path.join(__dirname, 'students.txt'),
+          resolveRoot('students.txt'),
           JSON.stringify(students),
           'utf8'
         );
